@@ -9,7 +9,7 @@ int main(void)
   int rec_count = 0;
   const char *errMSG;
   const char *tail;
-  error = sqlite3_open("kcal.db", &conn);
+  error = sqlite3_open("kcal_table.db", &conn);
   if(error)
   {
     puts("Can not open database");
