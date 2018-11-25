@@ -1,1 +1,3 @@
-gcc -o gtk_test gtk_test.c `pkg-config --libs gtk+-3.0`
+test_gtk: test_gtk.c
+	gcc `pkg-config --cflags gtk+-3.0` -o test_gtk test_gtk.c `pkg-config --libs gtk+-3.0`
+
