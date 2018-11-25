@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "mysql.h"
+#include "/usr/include/mysql/mysql.h"
 
 int main(int argc, char *argv[])
 {
 
-  MYSQL *conn = mysql_init(NULL);
+  MYSQL *conn;
+  mysql_init(NULL);
 
   if( conn == NULL )
   {
@@ -13,14 +14,14 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  if( mysql_real_connect(conn, '%', "e_body", "123456", NULL, 0, NULL, 0) == NULL )
+  if( mysql_real_connect(conn, "localhost", "dongho", "123456", "SalBBAE", 0, NULL, 0) == NULL )
   {
     fprintf(stderr, "%s\n", mysql_error(conn));
     mysql_close(conn);
     exit(1);
   }
 
-  if( mysql_query(conn, "CREATE DATABASE testdb") )
+  if( mysql_query(conn, "CREATE DATABASE SalBBAE") )
   {
     fprintf(stderr, "%s\n", mysql_error(conn));
     mysql_close(conn);
