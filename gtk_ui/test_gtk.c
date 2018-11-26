@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include <time.h>
 
+
 static void activate (GtkApplication* app, gpointer user_data){
 
   GtkWidget *window;
@@ -8,6 +9,8 @@ static void activate (GtkApplication* app, gpointer user_data){
   GtkWidget *weight_entry;
   GtkWidget *input_button;
   GtkWidget *calendar;
+  GtkWidget *std_weight_label;
+  GtkWidget *frame;
   GtkWidget *fixed;
 
   struct tm *t;
@@ -26,14 +29,25 @@ static void activate (GtkApplication* app, gpointer user_data){
   //input height area
   height_entry=gtk_entry_new();
   gtk_fixed_put(GTK_FIXED(fixed),height_entry,15,15);
+  gtk_entry_set_placeholder_text(GTK_ENTRY(height_entry),"height (cm)");
   //input weight area
   weight_entry=gtk_entry_new();
   gtk_fixed_put(GTK_FIXED(fixed),weight_entry,15,50);
-
+  gtk_entry_set_placeholder_text(GTK_ENTRY(weight_entry),"weight (kg)");
   //input_button area
   input_button=gtk_button_new_with_label("enter");
   gtk_fixed_put(GTK_FIXED(fixed),input_button,180,15);
   gtk_widget_set_size_request(input_button,50,60);
+
+  //standard weight frame area
+  frame=gtk_frame_new("↓ Standard weight ↓");
+  gtk_fixed_put(GTK_FIXED(fixed),frame,15,100);
+  gtk_widget_set_size_request(frame,220,100);
+  gtk_frame_set_label_align(GTK_FRAME(frame),0.5,0.5);
+
+  //label showing standard weight
+  std_weight_label=gtk_label_new("65kg");
+  gtk_container_add(GTK_CONTAINER(frame),std_weight_label);
 
   //calendar area
   calendar=gtk_calendar_new();
