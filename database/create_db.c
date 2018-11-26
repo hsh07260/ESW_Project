@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
   {
     fprintf(stderr, "%s\n",mysql_error(conn));
   }
-  if( mysql_real_connect(conn, "localhost", "dongho", "123456", "SalBBAE", 0, NULL, 0) == NULL )
+  if( mysql_real_connect(conn, "localhost", NULL, "123456", "SalBBAE", 0, NULL, 0) == NULL )
   {
     finish_with_error(conn);
   }
@@ -26,10 +26,6 @@ int main(int argc, char *argv[])
   {
     finish_with_error(conn);
   }
-  //if(mysql_query(conn, "INSERT INTO kcal_table('물', 0)"))
-  //{
-  //  finish_with_error(conn);
-  //}
 
   mysql_close(conn);
   exit(0);
