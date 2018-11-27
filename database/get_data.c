@@ -34,8 +34,27 @@ int main(int argc, char *argv[])
     finish_with_error(conn);
   }
 
+  MYSQL_RES *result;
+  result = mysql_store_result(conn);
+  if (result == NULL)
+  {
+    printf("result error\n");
+    finish_with_error(conn);
+  }
 
+  int num_fields = mysql_num_fields(result);
+  MYSQL_ROW row;
+  while(row = mysql_fetch_row(result))
+  {
+    for(int i=0;i<num_fields;i++)
+    {
+      printf("%s    ", row[i]);// ? row[i] : "NULL");
+    }
+    printf("\n");
+  }
 
-
-
+  mysql_free_result(result);
+  mysql_close(conn);
+  exit(0);
+  return 0;
 }
