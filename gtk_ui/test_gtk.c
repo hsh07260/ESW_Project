@@ -17,6 +17,7 @@ GtkWidget *input_button;
 GtkWidget *add_button;
 GtkWidget *remove_button;
 GtkWidget *rewrite_button;
+GtkWidget *save_button;
 
 GtkWidget *std_weight_label;
 GtkWidget *morning_label;
@@ -47,6 +48,11 @@ GtkWidget *dinner1;
 GtkWidget *dinner2;
 GtkWidget *dinner3;
 
+GtkWidget *calorie_frame;
+GtkWidget *calorie_label;
+
+GtkWidget *txt_frame;
+GtkWidget *txt_vw;
 
 void input_clicked(){
 }
@@ -141,6 +147,10 @@ static void activate (GtkApplication* app, gpointer user_data){
   gtk_widget_set_size_request(weight_frame,200,70);
   gtk_frame_set_label_align(GTK_FRAME(weight_frame),0.5,0.5);
 
+  //label showing standard weight
+  std_weight_label=gtk_label_new("65kg");
+  gtk_container_add(GTK_CONTAINER(weight_frame),std_weight_label);
+
   //main_frame area
   main_frame=gtk_frame_new(NULL);
   gtk_fixed_put(GTK_FIXED(fixed),main_frame,240,15);
@@ -149,6 +159,29 @@ static void activate (GtkApplication* app, gpointer user_data){
   //main_fixed;
   main_fixed=gtk_fixed_new();
   gtk_container_add(GTK_CONTAINER(main_frame),main_fixed);
+
+  //calorie_frame
+  calorie_frame=gtk_frame_new("today total Calorie");
+  gtk_frame_set_label_align(GTK_FRAME(calorie_frame),0.5,0.5);
+  gtk_widget_set_size_request(calorie_frame,220,100);
+  gtk_fixed_put(GTK_FIXED(main_fixed),calorie_frame,300,20);
+
+  calorie_label=gtk_label_new("kcal");
+  gtk_container_add(GTK_CONTAINER(calorie_frame),calorie_label);
+
+  //input diary in text view
+  txt_frame=gtk_frame_new("Today Comments");
+  gtk_frame_set_label_align(GTK_FRAME(txt_frame),0.5,0.5);
+  gtk_widget_set_size_request(txt_frame,220,180);
+  gtk_fixed_put(GTK_FIXED(main_fixed),txt_frame,300,130);
+
+  txt_vw=gtk_text_view_new();
+  gtk_widget_set_size_request(txt_vw,220,140);
+  gtk_container_add(GTK_CONTAINER(txt_frame),txt_vw);
+
+  //Save button
+  save_button=gtk_button_new_with_label("Save");
+  gtk_fixed_put(GTK_FIXED(main_fixed),save_button,475,320);
 
   //morning,lunch,dinner entry vbox
   morning_entry=gtk_box_new(GTK_ORIENTATION_VERTICAL,2);
@@ -199,11 +232,6 @@ static void activate (GtkApplication* app, gpointer user_data){
   gtk_box_pack_start(GTK_BOX(dinner_entry),dinner3,FALSE,FALSE,0);
 
   gtk_fixed_put(GTK_FIXED(main_fixed),dinner_entry,100,260);
-
-
-  //label showing standard weight
-  std_weight_label=gtk_label_new("65kg");
-  gtk_container_add(GTK_CONTAINER(weight_frame),std_weight_label);
 
   //show all of widget in winodow
   gtk_widget_show_all(window);
