@@ -8,6 +8,57 @@ enum{
 
 GtkWidget *list;
 
+GtkWidget *window;
+
+GtkWidget *height_entry;
+GtkWidget *weight_entry;
+
+GtkWidget *input_button;
+GtkWidget *add_button;
+GtkWidget *remove_button;
+GtkWidget *rewrite_button;
+
+GtkWidget *std_weight_label;
+GtkWidget *morning_label;
+GtkWidget *lunch_label;
+GtkWidget *dinner_label;
+
+GtkWidget *weight_frame;
+GtkWidget *main_frame;
+GtkWidget *fixed;
+GtkWidget *list_frame;
+GtkWidget *sw;
+
+GtkWidget *main_fixed;
+
+GtkWidget *morning_entry;
+GtkWidget *lunch_entry;
+GtkWidget *dinner_entry;
+
+GtkWidget *morning1;
+GtkWidget *morning2;
+GtkWidget *morning3;
+
+GtkWidget *lunch1;
+GtkWidget *lunch2;
+GtkWidget *lunch3;
+
+GtkWidget *dinner1;
+GtkWidget *dinner2;
+GtkWidget *dinner3;
+
+
+void input_clicked(){
+}
+void add_clicked(){
+}
+void remove_clicked(){
+}
+void rewrite_clicked(){
+}
+
+
+
 void init_list(GtkWidget *list) {
 
   GtkCellRenderer    *renderer;
@@ -28,24 +79,6 @@ void init_list(GtkWidget *list) {
 
 static void activate (GtkApplication* app, gpointer user_data){
 
-  GtkWidget *window;
-
-  GtkWidget *height_entry;
-  GtkWidget *weight_entry;
-
-  GtkWidget *input_button;
-  GtkWidget *add_button;
-  GtkWidget *remove_button;
-  GtkWidget *rewrite_button;
-
-  GtkWidget *std_weight_label;
-
-  GtkWidget *weight_frame;
-  GtkWidget *main_frame;
-  GtkWidget *fixed;
-  GtkWidget *list_frame;
-  GtkWidget *sw;
-
   struct tm *t;
 
   //int year,month,day;
@@ -53,7 +86,7 @@ static void activate (GtkApplication* app, gpointer user_data){
   //window setting
   window = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW(window), "Sal-BBae");
-  gtk_window_set_default_size (GTK_WINDOW(window), 600,400);
+  gtk_window_set_default_size (GTK_WINDOW(window), 800,400);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_MOUSE);
 
   //widget container
@@ -90,6 +123,8 @@ static void activate (GtkApplication* app, gpointer user_data){
   input_button=gtk_button_new_with_label("enter");
   gtk_fixed_put(GTK_FIXED(fixed),input_button,180,15);
   gtk_widget_set_size_request(input_button,50,60);
+  g_signal_connect(window,"clicked",
+                   G_CALLBACK(input_clicked),std_weight_label);
   //add_button area
   add_button=gtk_button_new_with_label("add");
   gtk_fixed_put(GTK_FIXED(fixed),add_button,25,365);
@@ -109,7 +144,62 @@ static void activate (GtkApplication* app, gpointer user_data){
   //main_frame area
   main_frame=gtk_frame_new(NULL);
   gtk_fixed_put(GTK_FIXED(fixed),main_frame,240,15);
-  gtk_widget_set_size_request(main_frame,350,375);
+  gtk_widget_set_size_request(main_frame,550,375);
+
+  //main_fixed;
+  main_fixed=gtk_fixed_new();
+  gtk_container_add(GTK_CONTAINER(main_frame),main_fixed);
+
+  //morning,lunch,dinner entry vbox
+  morning_entry=gtk_box_new(GTK_ORIENTATION_VERTICAL,2);
+  lunch_entry=gtk_box_new(GTK_ORIENTATION_VERTICAL,2);
+  dinner_entry=gtk_box_new(GTK_ORIENTATION_VERTICAL,2);
+
+  //morning area
+  morning_label=gtk_label_new("morning");
+  gtk_container_add(GTK_CONTAINER(main_fixed),morning_label);
+  gtk_fixed_put(GTK_FIXED(main_fixed),morning_label,15,60);
+
+  morning1=gtk_entry_new();
+  morning2=gtk_entry_new();
+  morning3=gtk_entry_new();
+
+  gtk_box_pack_start(GTK_BOX(morning_entry),morning1,FALSE,FALSE,0);
+  gtk_box_pack_start(GTK_BOX(morning_entry),morning2,FALSE,FALSE,0);
+  gtk_box_pack_start(GTK_BOX(morning_entry),morning3,FALSE,FALSE,0);
+
+  gtk_fixed_put(GTK_FIXED(main_fixed),morning_entry,100,25);
+
+  //lunch area
+  lunch_label=gtk_label_new("       lunch");
+  gtk_container_add(GTK_CONTAINER(main_fixed),lunch_label);
+  gtk_fixed_put(GTK_FIXED(main_fixed),lunch_label,15,175);
+
+  lunch1=gtk_entry_new();
+  lunch2=gtk_entry_new();
+  lunch3=gtk_entry_new();
+
+  gtk_box_pack_start(GTK_BOX(lunch_entry),lunch1,FALSE,FALSE,0);
+  gtk_box_pack_start(GTK_BOX(lunch_entry),lunch2,FALSE,FALSE,0);
+  gtk_box_pack_start(GTK_BOX(lunch_entry),lunch3,FALSE,FALSE,0);
+
+  gtk_fixed_put(GTK_FIXED(main_fixed),lunch_entry,100,140);
+
+  //dinner area
+  dinner_label=gtk_label_new("     dinner");
+  gtk_container_add(GTK_CONTAINER(main_fixed),dinner_label);
+  gtk_fixed_put(GTK_FIXED(main_fixed),dinner_label,15,300);
+
+  dinner1=gtk_entry_new();
+  dinner2=gtk_entry_new();
+  dinner3=gtk_entry_new();
+
+  gtk_box_pack_start(GTK_BOX(dinner_entry),dinner1,FALSE,FALSE,0);
+  gtk_box_pack_start(GTK_BOX(dinner_entry),dinner2,FALSE,FALSE,0);
+  gtk_box_pack_start(GTK_BOX(dinner_entry),dinner3,FALSE,FALSE,0);
+
+  gtk_fixed_put(GTK_FIXED(main_fixed),dinner_entry,100,260);
+
 
   //label showing standard weight
   std_weight_label=gtk_label_new("65kg");
