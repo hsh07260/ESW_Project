@@ -28,39 +28,24 @@ int main(int argc, char *argv[])
     printf("connect error\n");
     finish_with_error(conn);
   }
-
-  if(mysql_query(conn, "SELECT * FROM kcal_table"))
+  char create[100] = "CREATE TABLE ";
+  char *t_name = "2018";
+  strcat(create,t_name);
+  printf("%s\n",create);
+  char *pa = " (cal INT, comment TEXT)";
+  strcat(create,pa);
+  printf("%s\n",create);
+  if(mysql_query(conn, "CREATE TABLE test (cal INT, comment TEXT)"))
   {
     printf("query error\n");
     finish_with_error(conn);
   }
+  //if(mysql_query(conn, create))
+  //{
+  //  printf("query error\n");
+  //  finish_with_error(conn);
+  //}
 
-  MYSQL_RES *result;
-  MYSQL_FIELD *fields;
-  result = mysql_store_result(conn);
-  if (result == NULL)
-  {
-    printf("result error\n");
-    finish_with_error(conn);
-  }
-  int num_fields = mysql_num_fields(result);
-  MYSQL_ROW row;
-  fields = mysql_fetch_fields(result);
-  printf("%s\n",fields[1].name);
-
-
-  while(row = mysql_fetch_row(result))
-  {
-    if(strcmp("milk",row[0]) == 0)
-    {
-      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
-    }
-    //printf("row   %s\n",row[0]);
-    //printf("row  %d\n",atoi(row[1]));
-    //printf("\n");
-  }
-
-  mysql_free_result(result);
   mysql_close(conn);
   exit(0);
   return 0;
