@@ -1,5 +1,7 @@
 #include <gtk/gtk.h>
 #include <time.h>
+#include <stdlib.h>
+
 
 enum{
   LIST_ITEM = 0,
@@ -54,7 +56,18 @@ GtkWidget *calorie_label;
 GtkWidget *txt_frame;
 GtkWidget *txt_vw;
 
+const gchar *height_buff;
+const gchar *weight_buff;
+gchar standard_buff[10];
+double standard_weight;
+
 void input_clicked(){
+  height_buff = gtk_entry_get_text(GTK_ENTRY(height_entry));
+  weight_buff = gtk_entry_get_text(GTK_ENTRY(weight_entry));
+  standard_weight = (atof(height_buff)-100)*0.9;
+  sprintf(standard_buff,"%.1f kg",standard_weight);
+  gtk_label_set_text(GTK_LABEL(std_weight_label),standard_buff);
+
 }
 void add_clicked(){
 }
@@ -129,8 +142,8 @@ static void activate (GtkApplication* app, gpointer user_data){
   input_button=gtk_button_new_with_label("enter");
   gtk_fixed_put(GTK_FIXED(fixed),input_button,180,15);
   gtk_widget_set_size_request(input_button,50,60);
-  g_signal_connect(window,"clicked",
-                   G_CALLBACK(input_clicked),std_weight_label);
+  g_signal_connect(input_button,"clicked",
+                   G_CALLBACK(input_clicked),NULL);
   //add_button area
   add_button=gtk_button_new_with_label("add");
   gtk_fixed_put(GTK_FIXED(fixed),add_button,25,365);
@@ -148,7 +161,7 @@ static void activate (GtkApplication* app, gpointer user_data){
   gtk_frame_set_label_align(GTK_FRAME(weight_frame),0.5,0.5);
 
   //label showing standard weight
-  std_weight_label=gtk_label_new("65kg");
+  std_weight_label=gtk_label_new(NULL);
   gtk_container_add(GTK_CONTAINER(weight_frame),std_weight_label);
 
   //main_frame area
@@ -176,6 +189,7 @@ static void activate (GtkApplication* app, gpointer user_data){
   gtk_fixed_put(GTK_FIXED(main_fixed),txt_frame,300,130);
 
   txt_vw=gtk_text_view_new();
+  gtk_text_view_set_editable(GTK_TEXT_VIEW(txt_vw),FALSE);
   gtk_widget_set_size_request(txt_vw,220,140);
   gtk_container_add(GTK_CONTAINER(txt_frame),txt_vw);
 
