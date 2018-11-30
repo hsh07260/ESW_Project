@@ -2,7 +2,6 @@
 #include <time.h>
 #include <stdlib.h>
 
-
 enum{
   LIST_ITEM = 0,
   N_COLUMNS
@@ -61,6 +60,9 @@ const gchar *weight_buff;
 gchar standard_buff[10];
 double standard_weight;
 
+GtkTreeSelection *selection;
+
+
 void input_clicked(){
   height_buff = gtk_entry_get_text(GTK_ENTRY(height_entry));
   weight_buff = gtk_entry_get_text(GTK_ENTRY(weight_entry));
@@ -70,13 +72,41 @@ void input_clicked(){
 
 }
 void add_clicked(){
+  GtkListStore *store;
+  GtkTreeIter iter;
+  gchar str[20];
+
+  time_t timer=time(NULL);
+  struct tm *t=localtime(&timer);
+  int year,month,day;
+
+  store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(list)));
+
+  gtk_list_store_append(store, &iter);
+  sprintf(str,"%d/%d/%d",(t->tm_year)+1900,t->tm_mon+1,t->tm_mday);
+  gtk_list_store_set(store, &iter, LIST_ITEM, str, -1);
+
 }
+
 void remove_clicked(){
+  GtkListStore *store;
+  GtkTreeModel *model;
+  GtkTreeIter  iter;
+
+  store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(list)));
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(list));
+
+  if (gtk_tree_model_get_iter_first(model, &iter) == FALSE) {
+      return;
+  }
+
+  if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection), 
+     &model, &iter)) {
+    gtk_list_store_remove(store, &iter);
+  }
 }
 void rewrite_clicked(){
 }
-
-
 
 void init_list(GtkWidget *list) {
 
@@ -87,6 +117,7 @@ void init_list(GtkWidget *list) {
   renderer = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes(NULL,
           renderer, "text", LIST_ITEM, NULL);
+  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list),FALSE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(list), column);
 
   store = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
@@ -97,10 +128,6 @@ void init_list(GtkWidget *list) {
 }
 
 static void activate (GtkApplication* app, gpointer user_data){
-
-  struct tm *t;
-
-  //int year,month,day;
 
   //window setting
   window = gtk_application_window_new (app);
@@ -147,12 +174,15 @@ static void activate (GtkApplication* app, gpointer user_data){
   //add_button area
   add_button=gtk_button_new_with_label("add");
   gtk_fixed_put(GTK_FIXED(fixed),add_button,25,365);
+  g_signal_connect(add_button,"clicked",
+                   G_CALLBACK(add_clicked),NULL);
+
   //remove_button area
   remove_button=gtk_button_new_with_label("remove");
   gtk_fixed_put(GTK_FIXED(fixed),remove_button,70,365);
-  //rewrite_button area
-  rewrite_button=gtk_button_new_with_label("rewrite");
-  gtk_fixed_put(GTK_FIXED(fixed),rewrite_button,140,365);
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(list));
+  g_signal_connect(remove_button,"clicked",
+                   G_CALLBACK(remove_clicked), selection);
 
   //standard weight frame area
   weight_frame=gtk_frame_new("↓ Standard weight ↓");
