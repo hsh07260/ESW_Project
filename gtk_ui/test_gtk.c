@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 
 enum{
   LIST_ITEM = 0,
@@ -19,6 +20,7 @@ GtkWidget *add_button;
 GtkWidget *remove_button;
 GtkWidget *rewrite_button;
 GtkWidget *save_button;
+GtkWidget *calculate;
 
 GtkWidget *std_weight_label;
 GtkWidget *morning_label;
@@ -86,6 +88,10 @@ void add_clicked(){
   sprintf(str,"%d/%d/%d",(t->tm_year)+1900,t->tm_mon+1,t->tm_mday);
   gtk_list_store_set(store, &iter, LIST_ITEM, str, -1);
 
+  gtk_editable_set_editable(GTK_EDITABLE(height_entry), TRUE);
+  gtk_editable_set_editable(GTK_EDITABLE(weight_entry), TRUE);
+  gtk_text_view_set_editable(GTK_TEXT_VIEW(txt_vw),TRUE);
+
 }
 
 void remove_clicked(){
@@ -100,12 +106,29 @@ void remove_clicked(){
       return;
   }
 
-  if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection), 
+  if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection),
      &model, &iter)) {
     gtk_list_store_remove(store, &iter);
   }
 }
-void rewrite_clicked(){
+void save_clicked(){
+
+  char *txt_vw_buff;
+  GtkTextBuffer *written_txt_buff;
+  GtkTextIter start;
+  GtkTextIter end;
+
+  written_txt_buff=gtk_text_view_get_buffer(GTK_TEXT_VIEW(txt_vw));
+  gtk_text_buffer_get_start_iter(written_txt_buff,&start);
+  gtk_text_buffer_get_end_iter(written_txt_buff,&end);
+  txt_vw_buff = gtk_text_buffer_get_text(written_txt_buff,
+                &start,&end,FALSE);
+
+  printf("%s\n",txt_vw_buff);
+
+}
+
+void calcul_clicked(){
 }
 
 void init_list(GtkWidget *list) {
@@ -160,10 +183,13 @@ static void activate (GtkApplication* app, gpointer user_data){
   height_entry=gtk_entry_new();
   gtk_fixed_put(GTK_FIXED(fixed),height_entry,15,15);
   gtk_entry_set_placeholder_text(GTK_ENTRY(height_entry),"height (cm)");
+  gtk_editable_set_editable(GTK_EDITABLE(height_entry), FALSE);
+
   //input weight area
   weight_entry=gtk_entry_new();
   gtk_fixed_put(GTK_FIXED(fixed),weight_entry,15,50);
   gtk_entry_set_placeholder_text(GTK_ENTRY(weight_entry),"weight (kg)");
+  gtk_editable_set_editable(GTK_EDITABLE(weight_entry), FALSE);
 
   //input_button area
   input_button=gtk_button_new_with_label("enter");
@@ -171,6 +197,7 @@ static void activate (GtkApplication* app, gpointer user_data){
   gtk_widget_set_size_request(input_button,50,60);
   g_signal_connect(input_button,"clicked",
                    G_CALLBACK(input_clicked),NULL);
+
   //add_button area
   add_button=gtk_button_new_with_label("add");
   gtk_fixed_put(GTK_FIXED(fixed),add_button,25,365);
@@ -226,7 +253,13 @@ static void activate (GtkApplication* app, gpointer user_data){
   //Save button
   save_button=gtk_button_new_with_label("Save");
   gtk_fixed_put(GTK_FIXED(main_fixed),save_button,475,320);
+  g_signal_connect(save_button,"clicked",
+                   G_CALLBACK(save_clicked), NULL);
 
+  //calculate_button
+  calculate=gtk_button_new_with_label("Calculate");
+  gtk_fixed_put(GTK_FIXED(main_fixed),calculate,300,320);
+  g_signal_connect(calculate,"clicked",G_CALLBACK(calcul_clicked),NULL);
   //morning,lunch,dinner entry vbox
   morning_entry=gtk_box_new(GTK_ORIENTATION_VERTICAL,2);
   lunch_entry=gtk_box_new(GTK_ORIENTATION_VERTICAL,2);
@@ -279,7 +312,6 @@ static void activate (GtkApplication* app, gpointer user_data){
 
   //show all of widget in winodow
   gtk_widget_show_all(window);
-
 }
 
 int main (int argc, char **argv){
