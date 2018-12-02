@@ -1,3 +1,5 @@
+#include "/usr/include/mysql/mysql.h"
+#include <stdio.h>
 #include <gtk/gtk.h>
 #include <time.h>
 #include <stdlib.h>
@@ -7,6 +9,12 @@ enum{
   LIST_ITEM = 0,
   N_COLUMNS
 };
+void finish_with_error(MYSQL *conn)
+{
+  fprintf(stderr, "%s\n",mysql_error(conn));
+  mysql_close(conn);
+  exit(1);
+}
 
 GtkWidget *list;
 
@@ -129,6 +137,106 @@ void save_clicked(){
 }
 
 void calcul_clicked(){
+
+  int mor_kcal1 = 0;
+  int mor_kcal2 = 0;
+  int mor_kcal3 = 0;
+  int lun_kcal1 = 0;
+  int lun_kcal2 = 0;
+  int lun_kcal3 = 0;
+  int din_kcal1 = 0;
+  int din_kcal2 = 0;
+  int din_kcal3 = 0;
+  int total_kcal = 0;
+  MYSQL *conn;
+  conn = mysql_init(NULL);
+
+  if( conn == NULL )
+  {
+    fprintf(stderr, "mysql_init() fail\n");
+    exit(1);
+  }
+  if( mysql_real_connect(conn, "localhost", NULL, "123456", "SalBBAE", 0, $
+  {
+    finish_with_error(conn);
+  }
+
+  if(mysql_query(conn, "SELECT * FROM kcal_table"))
+  {
+    finish_with_error(conn);
+  }
+  MYSQL_RES *result;
+  MYSQL_FIELD *fields;
+  result = mysql_store_result(conn);
+  if (result == NULL)
+  {
+    printf("result error\n");
+    finish_with_error(conn);
+  }
+  int num_fields = mysql_num_fields(result);
+  MYSQL_ROW row;
+  fields = mysql_fetch_fields(result);
+  printf("%s\n",fields[1].name);
+
+  while(row = mysql_fetch_row(result))
+  {
+    if(strcmp(get_entry_get_text(GTK_ENTRY(morning1)),row[0]) == 0)
+    {
+      mor_kcal1 = atoi(row[1]);
+      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+    if(strcmp(get_entry_get_text(GTK_ENTRY(morning2)),row[0]) == 0)
+    {
+      mor_kcal2 = atoi(row[1]);
+      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+    if(strcmp(get_entry_get_text(GTK_ENTRY(morning3)),row[0]) == 0)
+    {
+      mor_kcal3 = atoi(row[1]);
+      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+    if(strcmp(get_entry_get_text(GTK_ENTRY(lunch1)),row[0]) == 0)
+    {
+      lun_kcal1 = atoi(row[1]);
+      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+    if(strcmp(get_entry_get_text(GTK_ENTRY(lunch2)),row[0]) == 0)
+    {
+      lun_kcal2 = atoi(row[1]);
+      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+    if(strcmp(get_entry_get_text(GTK_ENTRY(lunch3)),row[0]) == 0)
+    {
+      lun_kcal3 = atoi(row[1]);
+      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+    if(strcmp(get_entry_get_text(GTK_ENTRY(dinner1)),row[0]) == 0)
+    {
+      din_kcal1 = atoi(row[1]);
+      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+    if(strcmp(get_entry_get_text(GTK_ENTRY(dinner2)),row[0]) == 0)
+    {
+      din_kcal2 = atoi(row[1]);
+      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+    if(strcmp(get_entry_get_text(GTK_ENTRY(dinner3)),row[0]) == 0)
+    {
+      din_kcal3 = atoi(row[1]);
+      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+
+    //printf("row   %s\n",row[0]);
+    //printf("row  %d\n",atoi(row[1]));
+    //printf("\n");
+  }
+  total_kcal = mor_kcal1+mor_kcal2+mor_kcal3+lun_kcal1+lun_kcal2+lun_kcal3+din_kcal1+din_kcal2+din_kcal3;
+  printf("total kcal is %d \n",total_kcal);
+  mysql_free_result(result);
+  mysql_close(conn);
+  return 0;
+
+
 }
 
 void init_list(GtkWidget *list) {
