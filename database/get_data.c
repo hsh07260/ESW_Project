@@ -48,10 +48,11 @@ int main(int argc, char *argv[])
   fields = mysql_fetch_fields(result);
   printf("%s\n",fields[1].name);
 
-
+  char *milk = "milk";
   while(row = mysql_fetch_row(result))
   {
-    if(strcmp("milk",row[0]) == 0)
+    //if(strcmp("milk",row[0]) == 0)
+    if(strcmp(milk,row[0]) == 0)
     {
       printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
     }
