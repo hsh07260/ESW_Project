@@ -148,6 +148,7 @@ void calcul_clicked(){
   int din_kcal2 = 0;
   int din_kcal3 = 0;
   int total_kcal = 0;
+  gchar kcal_buff[20];
   MYSQL *conn;
   conn = mysql_init(NULL);
 
@@ -226,15 +227,13 @@ void calcul_clicked(){
       printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
     }
 
-    //printf("row   %s\n",row[0]);
-    //printf("row  %d\n",atoi(row[1]));
-    //printf("\n");
   }
   total_kcal = mor_kcal1+mor_kcal2+mor_kcal3+lun_kcal1+lun_kcal2+lun_kcal3+din_kcal1+din_kcal2+din_kcal3;
-  printf("total kcal is %d \n",total_kcal);
+  sprintf(kcal_buff,"Today Total %d kcal",total_kcal);
+  gtk_label_set_text(GTK_LABEL(calorie_label),kcal_buff);
+
   mysql_free_result(result);
   mysql_close(conn);
-  return 0;
 
 
 }
@@ -344,7 +343,7 @@ static void activate (GtkApplication* app, gpointer user_data){
   gtk_widget_set_size_request(calorie_frame,220,100);
   gtk_fixed_put(GTK_FIXED(main_fixed),calorie_frame,300,20);
 
-  calorie_label=gtk_label_new("kcal");
+  calorie_label=gtk_label_new(NULL);
   gtk_container_add(GTK_CONTAINER(calorie_frame),calorie_label);
 
   //input diary in text view
