@@ -8,6 +8,26 @@ enum{
   N_COLUMNS
 };
 
+typedef struct item{
+  char *date;
+  char *height;
+  char *weight;
+  char *std_wieght;
+  char *m1;
+  char *m2;
+  char *m3;
+  char *l1;
+  char *l2;
+  char *l3;
+  char *d1;
+  char *d2;
+  char *d3;
+  char *total_calorie;
+  GtkTextBuffer *comments;
+}item;
+
+item db;
+
 GtkWidget *list;
 
 GtkWidget *window;
@@ -57,15 +77,16 @@ GtkWidget *calorie_label;
 GtkWidget *txt_frame;
 GtkWidget *txt_vw;
 
-const gchar *height_buff;
-const gchar *weight_buff;
-gchar standard_buff[10];
-double standard_weight;
 
 GtkTreeSelection *selection;
 
 
 void input_clicked(){
+  const gchar *height_buff;
+  const gchar *weight_buff;
+  double standard_weight;
+  gchar standard_buff[10];
+
   height_buff = gtk_entry_get_text(GTK_ENTRY(height_entry));
   weight_buff = gtk_entry_get_text(GTK_ENTRY(weight_entry));
   standard_weight = (atof(height_buff)-100)*0.9;
@@ -128,6 +149,27 @@ void save_clicked(){
 
 }
 
+void changed_item(){
+  GtkListStore *store;
+  GtkTreeModel *model;
+  GtkTreeIter  iter;
+  char *get_date;
+
+  store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(list)));
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(list));
+
+  if (gtk_tree_model_get_iter_first(model, &iter) == FALSE) {
+      return;
+  }
+
+  if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection),
+     &model, &iter)) {
+    gtk_tree_model_get(model, &iter,LIST_ITEM, &get_date, -1);
+  }
+  printf("%s\n",get_date);
+
+}
+
 void calcul_clicked(){
 }
 
@@ -149,6 +191,8 @@ void init_list(GtkWidget *list) {
 
   g_object_unref(store);
 }
+
+
 
 static void activate (GtkApplication* app, gpointer user_data){
 
@@ -178,6 +222,7 @@ static void activate (GtkApplication* app, gpointer user_data){
   list = gtk_tree_view_new();
   gtk_container_add(GTK_CONTAINER(sw), list);
   init_list(list);
+  g_signal_connect(list,"row-activated",G_CALLBACK(changed_item),NULL);
 
   //input height area
   height_entry=gtk_entry_new();
