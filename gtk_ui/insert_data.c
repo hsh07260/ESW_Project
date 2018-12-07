@@ -5,7 +5,7 @@
 
 void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,char *data6,char *data7,char *data8,char *data9,char *data10,char *data11,char *data12,char *data13)
 {
-  char query[255];
+  char query[1000];
 
   MYSQL *conn;
   conn = mysql_init(NULL);
@@ -14,8 +14,8 @@ void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,cha
   {
     printf("connect error\n");
   }
-  sprintf(query,"insert into record(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')", "date","m1","m2","m3","l1","l2","l3","d1","d2","d3","tocal","weight","comment",data1,data2,data3,data4,data5,data6,data7,data8,data9,data10,data11,data12,data13);
-  //printf("%s %s \n",field, data);
+  printf("connect success\n");
+  sprintf(query,"INSERT INTO record (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')", "date","m1","m2","m3","l1","l2","l3","d1","d2","d3","tocal","weight","comment",data1,data2,data3,data4,data5,data6,data7,data8,data9,data10,data11,data12,data13);
   if(mysql_query(conn, query))
   {
     printf("query error\n");
@@ -23,4 +23,5 @@ void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,cha
 
   mysql_close(conn);
   exit(0);
+  return;
 }

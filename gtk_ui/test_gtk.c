@@ -4,7 +4,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
-#include "insert_data.h"
+//#include "insert_data.h"
 
 enum{
   LIST_ITEM = 0,
@@ -15,6 +15,39 @@ void finish_with_error(MYSQL *conn)
   fprintf(stderr, "%s\n",mysql_error(conn));
   mysql_close(conn);
   exit(1);
+}
+void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,char *data6,char *data7,char *data8,char *data9,char *data10)
+{
+  char query[1000];
+
+  MYSQL *conn;
+  conn = mysql_init(NULL);
+
+  if( mysql_real_connect(conn, "localhost", NULL, "123456", "SalBBAE", 0, NULL,0)==NULL)
+  {
+    printf("connect error\n");
+  }
+  printf("connect success\n");
+  printf("%s\n",data1);
+  printf("%s\n",data2);
+  printf("%s\n",data3);
+  printf("%s\n",data4);
+  printf("%s\n",data5);
+  printf("%s\n",data6);
+  printf("%s\n",data7);
+  printf("%s\n",data8);
+  printf("%s\n",data9);
+  printf("%s\n",data10);
+
+  sprintf(query,"insert into record (date,m1,m2,l1,l2,d1,d2,tocal,weight,comment) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",data1,data2,data3,data4,data5,data6,data7,data8,data9,data10);
+  if(mysql_query(conn, query))
+  {
+    printf("query error 11111 \n");
+  }
+
+  mysql_close(conn);
+  exit(0);
+  return;
 }
 
 
@@ -51,15 +84,12 @@ GtkWidget *dinner_entry;
 
 GtkWidget *morning1;
 GtkWidget *morning2;
-GtkWidget *morning3;
 
 GtkWidget *lunch1;
 GtkWidget *lunch2;
-GtkWidget *lunch3;
 
 GtkWidget *dinner1;
 GtkWidget *dinner2;
-GtkWidget *dinner3;
 
 GtkWidget *calorie_frame;
 GtkWidget *calorie_label;
@@ -127,15 +157,12 @@ void save_clicked(){
   char *comment;
   char *m1=(char *)gtk_entry_get_text(GTK_ENTRY(morning1));
   char *m2=(char *)gtk_entry_get_text(GTK_ENTRY(morning2));
-  char *m3=(char *)gtk_entry_get_text(GTK_ENTRY(morning3));
 
   char *l1=(char *)gtk_entry_get_text(GTK_ENTRY(lunch1));
   char *l2=(char *)gtk_entry_get_text(GTK_ENTRY(lunch2));
-  char *l3=(char *)gtk_entry_get_text(GTK_ENTRY(lunch3));
 
   char *d1=(char *)gtk_entry_get_text(GTK_ENTRY(dinner1));
   char *d2=(char *)gtk_entry_get_text(GTK_ENTRY(dinner2));
-  char *d3=(char *)gtk_entry_get_text(GTK_ENTRY(dinner3));
 
   char *tocal=(char *)gtk_label_get_text(GTK_LABEL(calorie_label));
 
@@ -148,9 +175,9 @@ void save_clicked(){
   written_txt_buff=gtk_text_view_get_buffer(GTK_TEXT_VIEW(txt_vw));
   gtk_text_buffer_get_start_iter(written_txt_buff,&start);
   gtk_text_buffer_get_end_iter(written_txt_buff,&end);
-  comment = gtk_text_buffer_get_text(written_txt_buff,
-                &start,&end,FALSE);
-  func_insert(date,m1,m2,m3,l1,l2,l3,d1,d2,d3,tocal,weight,comment);
+  comment = (char *)gtk_text_buffer_get_text(written_txt_buff,&start,&end,FALSE);
+
+  func_insert(date,m1,m2,l1,l2,d1,d2,tocal,weight,comment);
 
 
 }
@@ -180,13 +207,10 @@ void calcul_clicked(){
 
   int mor_kcal1 = 0;
   int mor_kcal2 = 0;
-  int mor_kcal3 = 0;
   int lun_kcal1 = 0;
   int lun_kcal2 = 0;
-  int lun_kcal3 = 0;
   int din_kcal1 = 0;
   int din_kcal2 = 0;
-  int din_kcal3 = 0;
   int total_kcal = 0;
   gchar kcal_buff[20];
   MYSQL *conn;
@@ -231,11 +255,6 @@ void calcul_clicked(){
       mor_kcal2 = atoi(row[1]);
       printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
     }
-    if(strcmp((char *)gtk_entry_get_text(GTK_ENTRY(morning3)),row[0]) == 0)
-    {
-      mor_kcal3 = atoi(row[1]);
-      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
-    }
     if(strcmp((char *)gtk_entry_get_text(GTK_ENTRY(lunch1)),row[0]) == 0)
     {
       lun_kcal1 = atoi(row[1]);
@@ -244,11 +263,6 @@ void calcul_clicked(){
     if(strcmp((char *)gtk_entry_get_text(GTK_ENTRY(lunch2)),row[0]) == 0)
     {
       lun_kcal2 = atoi(row[1]);
-      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
-    }
-    if(strcmp((char *)gtk_entry_get_text(GTK_ENTRY(lunch3)),row[0]) == 0)
-    {
-      lun_kcal3 = atoi(row[1]);
       printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
     }
     if(strcmp((char *)gtk_entry_get_text(GTK_ENTRY(dinner1)),row[0]) == 0)
@@ -261,15 +275,10 @@ void calcul_clicked(){
       din_kcal2 = atoi(row[1]);
       printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
     }
-    if(strcmp((char *)gtk_entry_get_text(GTK_ENTRY(dinner3)),row[0]) == 0)
-    {
-      din_kcal3 = atoi(row[1]);
-      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
-    }
 
   }
-  total_kcal = mor_kcal1+mor_kcal2+mor_kcal3+lun_kcal1+lun_kcal2+lun_kcal3+din_kcal1+din_kcal2+din_kcal3;
-  sprintf(kcal_buff,"Today Total %d kcal",total_kcal);
+  total_kcal = mor_kcal1+mor_kcal2+lun_kcal1+lun_kcal2+din_kcal1+din_kcal2;
+  sprintf(kcal_buff,"Today's %d kcal",total_kcal);
   gtk_label_set_text(GTK_LABEL(calorie_label),kcal_buff);
 
   mysql_free_result(result);
@@ -422,11 +431,9 @@ static void activate (GtkApplication* app, gpointer user_data){
 
   morning1=gtk_entry_new();
   morning2=gtk_entry_new();
-  morning3=gtk_entry_new();
 
   gtk_box_pack_start(GTK_BOX(morning_entry),morning1,FALSE,FALSE,0);
   gtk_box_pack_start(GTK_BOX(morning_entry),morning2,FALSE,FALSE,0);
-  gtk_box_pack_start(GTK_BOX(morning_entry),morning3,FALSE,FALSE,0);
 
   gtk_fixed_put(GTK_FIXED(main_fixed),morning_entry,100,25);
 
@@ -437,11 +444,9 @@ static void activate (GtkApplication* app, gpointer user_data){
 
   lunch1=gtk_entry_new();
   lunch2=gtk_entry_new();
-  lunch3=gtk_entry_new();
 
   gtk_box_pack_start(GTK_BOX(lunch_entry),lunch1,FALSE,FALSE,0);
   gtk_box_pack_start(GTK_BOX(lunch_entry),lunch2,FALSE,FALSE,0);
-  gtk_box_pack_start(GTK_BOX(lunch_entry),lunch3,FALSE,FALSE,0);
 
   gtk_fixed_put(GTK_FIXED(main_fixed),lunch_entry,100,140);
 
@@ -452,11 +457,9 @@ static void activate (GtkApplication* app, gpointer user_data){
 
   dinner1=gtk_entry_new();
   dinner2=gtk_entry_new();
-  dinner3=gtk_entry_new();
 
   gtk_box_pack_start(GTK_BOX(dinner_entry),dinner1,FALSE,FALSE,0);
   gtk_box_pack_start(GTK_BOX(dinner_entry),dinner2,FALSE,FALSE,0);
-  gtk_box_pack_start(GTK_BOX(dinner_entry),dinner3,FALSE,FALSE,0);
 
   gtk_fixed_put(GTK_FIXED(main_fixed),dinner_entry,100,260);
 
