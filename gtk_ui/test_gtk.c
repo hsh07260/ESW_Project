@@ -4,7 +4,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "insert_data.h"
+#include "insert_data.h"
 
 enum{
   LIST_ITEM = 0,
@@ -16,46 +16,28 @@ void finish_with_error(MYSQL *conn)
   mysql_close(conn);
   //exit(1);
 }
-void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,char *data6,char *data7,char *data8,char *data9,char *data10)
-{
-  char query[500];
 
-  MYSQL *conn;
-  conn = mysql_init(NULL);
+//void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,char *data6,char *data7,char *data8,char *data9,char *data10)
+//{
+//  char query[1000];
+//
+//  MYSQL *conn;
+//  conn = mysql_init(NULL);
 
-  if( mysql_real_connect(conn, "localhost", NULL, "123456", "SalBBAE", 0, NULL,0)==NULL)
-  {
-    printf("connect error\n");
-  }
-  printf("connect success\n");
-  printf("%s\n",data1);
-  printf("%s\n",data2);
-  printf("%s\n",data3);
-  printf("%s\n",data4);
-  printf("%s\n",data5);
-  printf("%s\n",data6);
-  printf("%s\n",data7);
-  printf("%s\n",data8);
-  printf("%s\n",data9);
-  printf("%s\n",data10);
+//  if( mysql_real_connect(conn, "localhost", NULL, "123456", "SalBBAE", 0, NULL,0)==NULL)
+//  {
+//    printf("connect error\n");
+//  }
+//  printf("connect success\n");
+//  sprintf(query,"INSERT INTO record (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')", "date","m1","m2","l1","l2","d1","d2","tocal","weight","comment",data1,data2,data3,data4,data5,data6,data7,data8,data9,data10);
+//  if(mysql_query(conn, query))
+//  {
+//    printf("query error\n");
+//  }
 
-  if(mysql_query(conn, "SELECT * FROM record"))
-  {
-    printf("query error\n");
-    finish_with_error(conn);
-  }
-
-
-  sprintf(query,"insert into record (date,m1,m2,l1,l2,d1,d2,tocal,weight,comment) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",data1,data2,data3,data4,data5,data6,data7,data8,data9,data10);
-  if(mysql_query(conn, query))
-  {
-    printf("query error 11111 \n");
-  }
-
-  mysql_close(conn);
-  //exit(0);
-  return;
-}
+//  mysql_close(conn);
+//  return;
+//}
 
 
 GtkWidget *list;
@@ -91,12 +73,15 @@ GtkWidget *dinner_entry;
 
 GtkWidget *morning1;
 GtkWidget *morning2;
+GtkWidget *morning3;
 
 GtkWidget *lunch1;
 GtkWidget *lunch2;
+GtkWidget *lunch3;
 
 GtkWidget *dinner1;
 GtkWidget *dinner2;
+GtkWidget *dinner3;
 
 GtkWidget *calorie_frame;
 GtkWidget *calorie_label;
@@ -165,6 +150,7 @@ void save_clicked(){
   char *m1=(char *)gtk_entry_get_text(GTK_ENTRY(morning1));
   char *m2=(char *)gtk_entry_get_text(GTK_ENTRY(morning2));
 
+
   char *l1=(char *)gtk_entry_get_text(GTK_ENTRY(lunch1));
   char *l2=(char *)gtk_entry_get_text(GTK_ENTRY(lunch2));
 
@@ -183,8 +169,9 @@ void save_clicked(){
   gtk_text_buffer_get_start_iter(written_txt_buff,&start);
   gtk_text_buffer_get_end_iter(written_txt_buff,&end);
   comment = (char *)gtk_text_buffer_get_text(written_txt_buff,&start,&end,FALSE);
-
+  printf("%s\n",tocal);
   func_insert(date,m1,m2,l1,l2,d1,d2,tocal,weight,comment);
+
 
 }
 
@@ -292,7 +279,8 @@ void calcul_clicked(){
   int din_kcal1 = 0;
   int din_kcal2 = 0;
   int total_kcal = 0;
-  gchar kcal_buff[20];
+  gchar tocal_buff[30];
+
   MYSQL *conn;
   conn = mysql_init(NULL);
 
@@ -311,7 +299,7 @@ void calcul_clicked(){
     finish_with_error(conn);
   }
   MYSQL_RES *result;
-  //MYSQL_FIELD *fields;
+  MYSQL_FIELD *fields;
   result = mysql_store_result(conn);
   if (result == NULL)
   {
@@ -320,8 +308,8 @@ void calcul_clicked(){
   }
   int num_fields = mysql_num_fields(result);
   MYSQL_ROW row;
-  //fields = mysql_fetch_fields(result);
-  //printf("%s\n",fields[1].name);
+  fields = mysql_fetch_fields(result);
+  printf("%s\n",fields[1].name);
 
   while(row = mysql_fetch_row(result))
   {
@@ -357,10 +345,9 @@ void calcul_clicked(){
     }
 
   }
-  total_kcal = mor_kcal1+mor_kcal2+lun_kcal1+lun_kcal2+din_kcal1+din_kcal2;
-  sprintf(kcal_buff,"Today's %d kcal",total_kcal);
-  gtk_label_set_text(GTK_LABEL(calorie_label),kcal_buff);
-
+  total_kcal = mor_kcal1 + mor_kcal2 + lun_kcal1 + lun_kcal2 + din_kcal1 + din_kcal2;
+  sprintf(tocal_buff,"Today calorie is %d kcal",total_kcal);
+  gtk_label_set_text(GTK_LABEL(calorie_label),tocal_buff);
   mysql_free_result(result);
   mysql_close(conn);
 

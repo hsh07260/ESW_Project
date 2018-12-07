@@ -4,8 +4,8 @@ PKG_GTK=`pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`
 
 
 
-$(TARGET): $(OBJECT) #libinsert_data.a
-	gcc `pkg-config --cflags gtk+-3.0` -o $(TARGET) $(OBJECT) `pkg-config --libs gtk+-3.0` -lmysqlclient #-L. -linsert_data
+$(TARGET): $(OBJECT) libinsert_data.a
+	gcc `pkg-config --cflags gtk+-3.0` -o $(TARGET) $(OBJECT) `pkg-config --libs gtk+-3.0` -lmysqlclient -L. -linsert_data
 
 
 libinsert_data.a: insert_data.o
