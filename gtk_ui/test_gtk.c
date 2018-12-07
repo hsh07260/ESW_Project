@@ -124,7 +124,7 @@ void remove_clicked(){
 }
 void save_clicked(){
 
-  char comment[100];
+  char *comment;
   char *m1=(char *)gtk_entry_get_text(GTK_ENTRY(morning1));
   char *m2=(char *)gtk_entry_get_text(GTK_ENTRY(morning2));
   char *m3=(char *)gtk_entry_get_text(GTK_ENTRY(morning3));
@@ -137,7 +137,7 @@ void save_clicked(){
   char *d2=(char *)gtk_entry_get_text(GTK_ENTRY(dinner2));
   char *d3=(char *)gtk_entry_get_text(GTK_ENTRY(dinner3));
 
-  char *tocal=(char *)gtk_label_get_text(GTK_LABEL(colorie_label));
+  char *tocal=(char *)gtk_label_get_text(GTK_LABEL(calorie_label));
 
   char *weight=gtk_entry_get_text(GTK_ENTRY(weight_entry));
 
