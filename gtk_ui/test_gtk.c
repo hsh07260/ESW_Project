@@ -18,7 +18,7 @@ void finish_with_error(MYSQL *conn)
 }
 void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,char *data6,char *data7,char *data8,char *data9,char *data10)
 {
-  char query[1000];
+  char query[500];
 
   MYSQL *conn;
   conn = mysql_init(NULL);
@@ -38,6 +38,13 @@ void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,cha
   printf("%s\n",data8);
   printf("%s\n",data9);
   printf("%s\n",data10);
+
+  if(mysql_query(conn, "SELECT * FROM record"))
+  {
+    printf("query error\n");
+    finish_with_error(conn);
+  }
+
 
   sprintf(query,"insert into record (date,m1,m2,l1,l2,d1,d2,tocal,weight,comment) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",data1,data2,data3,data4,data5,data6,data7,data8,data9,data10);
   if(mysql_query(conn, query))
@@ -179,7 +186,6 @@ void save_clicked(){
 
   func_insert(date,m1,m2,l1,l2,d1,d2,tocal,weight,comment);
 
-
 }
 
 void changed_item(){
@@ -217,13 +223,13 @@ void changed_item(){
     finish_with_error(conn);
   }
 
-  //if(mysql_query(conn, "SELECT * FROM kcal_table"))
   if(mysql_query(conn, "SELECT * FROM record"))
   {
     printf("query error\n");
     finish_with_error(conn);
   }
 
+  GtkTextBuffer *buffer=gtk_text_buffer_new(NULL);
   MYSQL_RES *result;
   MYSQL_FIELD *fields;
   result = mysql_store_result(conn);
@@ -235,18 +241,12 @@ void changed_item(){
   int num_fields = mysql_num_fields(result);
   MYSQL_ROW row;
   fields = mysql_fetch_fields(result);
-  //printf("%s\n",fields[1].name);
 
   get_date = "123";
-  //char *milk = "milk";
   while(row = mysql_fetch_row(result))
   {
-    //if(strcmp("milk",row[0]) == 0)
-    //if(strcmp(milk,row[0]) == 0)
     if(strcmp(get_date,row[0])==0)
-    //if(strcmp(m1,row[0]) == 0)
     {
-      //printf("%s is %s \n",m1,row[1]);
       printf("%s \n",row[0]);
       printf("%s \n",row[1]);
       printf("%s \n",row[2]);
@@ -266,25 +266,19 @@ void changed_item(){
 
       gtk_entry_set_text(GTK_ENTRY(lunch1), row[3]);
       gtk_entry_set_text(GTK_ENTRY(lunch2), row[4]);
-      //gtk_entry_set_text(GTK_ENTRY(lunch3), NULL);
 
       gtk_entry_set_text(GTK_ENTRY(dinner1), row[5]);
       gtk_entry_set_text(GTK_ENTRY(dinner2), row[6]);
-      //gtk_entry_set_text(GTK_ENTRY(dinner3), NULL);
 
       gtk_label_set_text(GTK_LABEL(calorie_label), row[7]);
-      //gtk_text_view_set_buffer(GTK_TEXT_VIEW(txt_vw), row[9]);
+      gtk_text_buffer_set_text(buffer,row[9],strlen(row[9]));
+      gtk_text_view_set_buffer(GTK_TEXT_VIEW(txt_vw), buffer);
 
-      //printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
     }
-    //printf("row   %s\n",row[0]);
-    //printf("row  %d\n",atoi(row[1]));
-    //printf("\n");
   }
 
   mysql_free_result(result);
   mysql_close(conn);
-  return 0;
 
 
 }
