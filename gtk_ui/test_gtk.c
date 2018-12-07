@@ -139,7 +139,7 @@ void save_clicked(){
 
   char *tocal=(char *)gtk_label_get_text(GTK_LABEL(calorie_label));
 
-  char *weight=gtk_entry_get_text(GTK_ENTRY(weight_entry));
+  char *weight=(char *)gtk_entry_get_text(GTK_ENTRY(weight_entry));
 
   GtkTextBuffer *written_txt_buff;
   GtkTextIter start;
@@ -150,6 +150,7 @@ void save_clicked(){
   gtk_text_buffer_get_end_iter(written_txt_buff,&end);
   comment = gtk_text_buffer_get_text(written_txt_buff,
                 &start,&end,FALSE);
+  func_insert(date,m1,m2,m3,l1,l2,l3,d1,d2,d3,tocal,weight,comment);
 
 
 }
