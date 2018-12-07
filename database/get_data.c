@@ -29,7 +29,8 @@ int main(int argc, char *argv[])
     finish_with_error(conn);
   }
 
-  if(mysql_query(conn, "SELECT * FROM kcal_table"))
+  //if(mysql_query(conn, "SELECT * FROM kcal_table"))
+  if(mysql_query(conn, "SELECT * FROM record"))
   {
     printf("query error\n");
     finish_with_error(conn);
@@ -48,13 +49,17 @@ int main(int argc, char *argv[])
   fields = mysql_fetch_fields(result);
   printf("%s\n",fields[1].name);
 
-  char *milk = "milk";
+  //char *milk = "milk";
+  char * m1 = "123";
   while(row = mysql_fetch_row(result))
   {
     //if(strcmp("milk",row[0]) == 0)
-    if(strcmp(milk,row[0]) == 0)
+    //if(strcmp(milk,row[0]) == 0)
+    if(strcmp(m1,row[1])==0)
+    //if(strcmp(m1,row[0]) == 0)
     {
-      printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+      printf("%s is %s \n",m1,row[1]);
+      //printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
     }
     //printf("row   %s\n",row[0]);
     //printf("row  %d\n",atoi(row[1]));
@@ -63,6 +68,5 @@ int main(int argc, char *argv[])
 
   mysql_free_result(result);
   mysql_close(conn);
-  exit(0);
   return 0;
 }

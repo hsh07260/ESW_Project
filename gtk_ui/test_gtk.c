@@ -14,7 +14,7 @@ void finish_with_error(MYSQL *conn)
 {
   fprintf(stderr, "%s\n",mysql_error(conn));
   mysql_close(conn);
-  exit(1);
+  //exit(1);
 }
 void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,char *data6,char *data7,char *data8,char *data9,char *data10)
 {
@@ -46,7 +46,7 @@ void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,cha
   }
 
   mysql_close(conn);
-  exit(0);
+  //exit(0);
   return;
 }
 
@@ -201,6 +201,92 @@ void changed_item(){
   }
   printf("%s\n",get_date);
 
+  MYSQL *conn;
+  conn = mysql_init(NULL);
+
+  if( conn == NULL )
+  {
+    printf("init fail\n");
+    fprintf(stderr, "mysql_init() fail\n");
+    exit(1);
+  }
+
+  if( mysql_real_connect(conn, "localhost", NULL, "123456", "SalBBAE", 0, NULL,0)==NULL)
+  {
+    printf("connect error\n");
+    finish_with_error(conn);
+  }
+
+  //if(mysql_query(conn, "SELECT * FROM kcal_table"))
+  if(mysql_query(conn, "SELECT * FROM record"))
+  {
+    printf("query error\n");
+    finish_with_error(conn);
+  }
+
+  MYSQL_RES *result;
+  MYSQL_FIELD *fields;
+  result = mysql_store_result(conn);
+  if (result == NULL)
+  {
+    printf("result error\n");
+    finish_with_error(conn);
+  }
+  int num_fields = mysql_num_fields(result);
+  MYSQL_ROW row;
+  fields = mysql_fetch_fields(result);
+  //printf("%s\n",fields[1].name);
+
+  get_date = "123";
+  //char *milk = "milk";
+  while(row = mysql_fetch_row(result))
+  {
+    //if(strcmp("milk",row[0]) == 0)
+    //if(strcmp(milk,row[0]) == 0)
+    if(strcmp(get_date,row[0])==0)
+    //if(strcmp(m1,row[0]) == 0)
+    {
+      //printf("%s is %s \n",m1,row[1]);
+      printf("%s \n",row[0]);
+      printf("%s \n",row[1]);
+      printf("%s \n",row[2]);
+      printf("%s \n",row[3]);
+      printf("%s \n",row[4]);
+      printf("%s \n",row[5]);
+      printf("%s \n",row[6]);
+      printf("%s \n",row[7]);
+      printf("%s \n",row[8]);
+
+
+      gtk_entry_set_text(GTK_ENTRY(weight_entry), row[8]);
+
+      gtk_entry_set_text(GTK_ENTRY(morning1), row[1]);
+      gtk_entry_set_text(GTK_ENTRY(morning2), row[2]);
+      //gtk_entry_set_text(GTK_ENTRY(morning3), NULL);
+
+      gtk_entry_set_text(GTK_ENTRY(lunch1), row[3]);
+      gtk_entry_set_text(GTK_ENTRY(lunch2), row[4]);
+      //gtk_entry_set_text(GTK_ENTRY(lunch3), NULL);
+
+      gtk_entry_set_text(GTK_ENTRY(dinner1), row[5]);
+      gtk_entry_set_text(GTK_ENTRY(dinner2), row[6]);
+      //gtk_entry_set_text(GTK_ENTRY(dinner3), NULL);
+
+      gtk_label_set_text(GTK_LABEL(calorie_label), row[7]);
+      //gtk_text_view_set_buffer(GTK_TEXT_VIEW(txt_vw), row[9]);
+
+      //printf("%s 's kcal is %d\n",row[0],atoi(row[1]));
+    }
+    //printf("row   %s\n",row[0]);
+    //printf("row  %d\n",atoi(row[1]));
+    //printf("\n");
+  }
+
+  mysql_free_result(result);
+  mysql_close(conn);
+  return 0;
+
+
 }
 
 void calcul_clicked(){
@@ -231,7 +317,7 @@ void calcul_clicked(){
     finish_with_error(conn);
   }
   MYSQL_RES *result;
-  MYSQL_FIELD *fields;
+  //MYSQL_FIELD *fields;
   result = mysql_store_result(conn);
   if (result == NULL)
   {
@@ -240,8 +326,8 @@ void calcul_clicked(){
   }
   int num_fields = mysql_num_fields(result);
   MYSQL_ROW row;
-  fields = mysql_fetch_fields(result);
-  printf("%s\n",fields[1].name);
+  //fields = mysql_fetch_fields(result);
+  //printf("%s\n",fields[1].name);
 
   while(row = mysql_fetch_row(result))
   {
