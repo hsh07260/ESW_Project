@@ -16,25 +16,6 @@ void finish_with_error(MYSQL *conn)
   exit(1);
 }
 
-typedef struct item{
-  char *date;
-  char *height;
-  char *weight;
-  char *std_wieght;
-  char *m1;
-  char *m2;
-  char *m3;
-  char *l1;
-  char *l2;
-  char *l3;
-  char *d1;
-  char *d2;
-  char *d3;
-  char *total_calorie;
-  GtkTextBuffer *comments;
-}item;
-
-item db;
 
 GtkWidget *list;
 
@@ -88,6 +69,7 @@ GtkWidget *txt_vw;
 
 GtkTreeSelection *selection;
 
+char date[20];
 
 void input_clicked(){
   const gchar *height_buff;
@@ -105,7 +87,6 @@ void input_clicked(){
 void add_clicked(){
   GtkListStore *store;
   GtkTreeIter iter;
-  gchar str[20];
 
   time_t timer=time(NULL);
   struct tm *t=localtime(&timer);
@@ -114,8 +95,8 @@ void add_clicked(){
   store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(list)));
 
   gtk_list_store_append(store, &iter);
-  sprintf(str,"%d/%d/%d",(t->tm_year)+1900,t->tm_mon+1,t->tm_mday);
-  gtk_list_store_set(store, &iter, LIST_ITEM, str, -1);
+  sprintf(date,"%d/%d/%d",(t->tm_year)+1900,t->tm_mon+1,t->tm_mday);
+  gtk_list_store_set(store, &iter, LIST_ITEM, date, -1);
 
   gtk_editable_set_editable(GTK_EDITABLE(height_entry), TRUE);
   gtk_editable_set_editable(GTK_EDITABLE(weight_entry), TRUE);
@@ -142,7 +123,23 @@ void remove_clicked(){
 }
 void save_clicked(){
 
-  char *txt_vw_buff;
+  char comment[100];
+  char *m1=(char *)gtk_entry_get_text(GTK_ENTRY(morning1));
+  char *m2=(char *)gtk_entry_get_text(GTK_ENTRY(morning2));
+  char *m3=(char *)gtk_entry_get_text(GTK_ENTRY(morning3));
+
+  char *l1=(char *)gtk_entry_get_text(GTK_ENTRY(lunch1));
+  char *l2=(char *)gtk_entry_get_text(GTK_ENTRY(lunch2));
+  char *l3=(char *)gtk_entry_get_text(GTK_ENTRY(lunch3));
+
+  char *d1=(char *)gtk_entry_get_text(GTK_ENTRY(dinner1));
+  char *d2=(char *)gtk_entry_get_text(GTK_ENTRY(dinner2));
+  char *d3=(char *)gtk_entry_get_text(GTK_ENTRY(dinner3));
+
+  char *tocal=(char *)gtk_label_get_text(GTK_LABEL(colorie_label));
+
+  char *weight=gtk_entry_get_text(GTK_ENTRY(weight_entry));
+
   GtkTextBuffer *written_txt_buff;
   GtkTextIter start;
   GtkTextIter end;
@@ -150,10 +147,9 @@ void save_clicked(){
   written_txt_buff=gtk_text_view_get_buffer(GTK_TEXT_VIEW(txt_vw));
   gtk_text_buffer_get_start_iter(written_txt_buff,&start);
   gtk_text_buffer_get_end_iter(written_txt_buff,&end);
-  txt_vw_buff = gtk_text_buffer_get_text(written_txt_buff,
+  comment = gtk_text_buffer_get_text(written_txt_buff,
                 &start,&end,FALSE);
 
-  printf("%s\n",txt_vw_buff);
 
 }
 
