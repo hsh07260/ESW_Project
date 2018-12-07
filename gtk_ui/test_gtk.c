@@ -126,9 +126,12 @@ void remove_clicked(){
   GtkListStore *store;
   GtkTreeModel *model;
   GtkTreeIter  iter;
-
+  GtkTextBuffer *buffer=gtk_text_buffer_new(NULL);
+  char *get_date;
+  char remove_buf[20];
   store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(list)));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(list));
+
 
   if (gtk_tree_model_get_iter_first(model, &iter) == FALSE) {
       return;
@@ -136,7 +139,26 @@ void remove_clicked(){
 
   if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection),
      &model, &iter)) {
+
+
+    gtk_tree_model_get(model, &iter,LIST_ITEM, &get_date, -1);
+
     gtk_list_store_remove(store, &iter);
+    gtk_entry_set_text(GTK_ENTRY(weight_entry), "");
+
+    gtk_entry_set_text(GTK_ENTRY(morning1), "");
+    gtk_entry_set_text(GTK_ENTRY(morning2), "");
+
+    gtk_entry_set_text(GTK_ENTRY(lunch1), "");
+    gtk_entry_set_text(GTK_ENTRY(lunch2), "");
+
+    gtk_entry_set_text(GTK_ENTRY(dinner1), "");
+    gtk_entry_set_text(GTK_ENTRY(dinner2), "");
+
+    gtk_label_set_text(GTK_LABEL(calorie_label), "");
+
+    gtk_text_buffer_set_text(buffer,"",strlen(""));
+    gtk_text_view_set_buffer(GTK_TEXT_VIEW(txt_vw), buffer);
   }
 }
 void save_clicked(){
