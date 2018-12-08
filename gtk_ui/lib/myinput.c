@@ -16,5 +16,3 @@ void input_clicked(GtkWidget *label, GtkWidget *h_entry, GtkWidget *w_entry){
 
 }
 
-void input_clicked(std_weight_label,height_entry,weight_entry);
-

@@ -5,11 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "insert_data.h"
+#include "myinit.h"
 
-enum{
-  LIST_ITEM = 0,
-  N_COLUMNS
-};
 void finish_with_error(MYSQL *conn)
 {
   fprintf(stderr, "%s\n",mysql_error(conn));
@@ -50,15 +47,12 @@ GtkWidget *dinner_entry;
 
 GtkWidget *morning1;
 GtkWidget *morning2;
-GtkWidget *morning3;
 
 GtkWidget *lunch1;
 GtkWidget *lunch2;
-GtkWidget *lunch3;
 
 GtkWidget *dinner1;
 GtkWidget *dinner2;
-GtkWidget *dinner3;
 
 GtkWidget *calorie_frame;
 GtkWidget *calorie_label;
@@ -70,24 +64,12 @@ GtkWidget *txt_vw;
 GtkTreeSelection *selection;
 
 char date[20];
-
-void input_clicked(){
-  const gchar *height_buff;
-  const gchar *weight_buff;
-  double standard_weight;
-  gchar standard_buff[10];
-
-  height_buff = gtk_entry_get_text(GTK_ENTRY(height_entry));
-  weight_buff = gtk_entry_get_text(GTK_ENTRY(weight_entry));
-  standard_weight = (atof(height_buff)-100)*0.9;
-  sprintf(standard_buff,"%.1f kg",standard_weight);
-  gtk_label_set_text(GTK_LABEL(std_weight_label),standard_buff);
-
+void enter_clicked(){
+  input_clicked(std_weight_label,height_entry,weight_entry);
 }
 void add_clicked(){
   GtkListStore *store;
   GtkTreeIter iter;
-  GtkTextBuffer *buffer=gtk_text_buffer_new(NULL);
 
   time_t timer=time(NULL);
   struct tm *t=localtime(&timer);
@@ -103,22 +85,8 @@ void add_clicked(){
   gtk_editable_set_editable(GTK_EDITABLE(weight_entry), TRUE);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(txt_vw),TRUE);
 
-  gtk_entry_set_text(GTK_ENTRY(weight_entry), "");
-
-  gtk_entry_set_text(GTK_ENTRY(morning1), "");
-  gtk_entry_set_text(GTK_ENTRY(morning2), "");
-
-  gtk_entry_set_text(GTK_ENTRY(lunch1), "");
-  gtk_entry_set_text(GTK_ENTRY(lunch2), "");
-
-  gtk_entry_set_text(GTK_ENTRY(dinner1), "");
-  gtk_entry_set_text(GTK_ENTRY(dinner2), "");
-
-  gtk_label_set_text(GTK_LABEL(calorie_label), "");
-
-  gtk_text_buffer_set_text(buffer,"",strlen(""));
-  gtk_text_view_set_buffer(GTK_TEXT_VIEW(txt_vw), buffer);
-
+  init_set(weight_entry,morning1,morning2,lunch1,lunch2,dinner1,dinner2,
+           calorie_label,txt_vw);
 
 }
 
@@ -126,9 +94,9 @@ void remove_clicked(){
   GtkListStore *store;
   GtkTreeModel *model;
   GtkTreeIter  iter;
-  GtkTextBuffer *buffer=gtk_text_buffer_new(NULL);
   char *get_date;
   char remove_buf[20];
+
   store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(list)));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(list));
 
@@ -144,21 +112,10 @@ void remove_clicked(){
     gtk_tree_model_get(model, &iter,LIST_ITEM, &get_date, -1);
 
     gtk_list_store_remove(store, &iter);
-    gtk_entry_set_text(GTK_ENTRY(weight_entry), "");
 
-    gtk_entry_set_text(GTK_ENTRY(morning1), "");
-    gtk_entry_set_text(GTK_ENTRY(morning2), "");
+    init_set(weight_entry,morning1,morning2,lunch1,lunch2,dinner1,dinner2,
+           calorie_label,txt_vw);
 
-    gtk_entry_set_text(GTK_ENTRY(lunch1), "");
-    gtk_entry_set_text(GTK_ENTRY(lunch2), "");
-
-    gtk_entry_set_text(GTK_ENTRY(dinner1), "");
-    gtk_entry_set_text(GTK_ENTRY(dinner2), "");
-
-    gtk_label_set_text(GTK_LABEL(calorie_label), "");
-
-    gtk_text_buffer_set_text(buffer,"",strlen(""));
-    gtk_text_view_set_buffer(GTK_TEXT_VIEW(txt_vw), buffer);
   }
 }
 void save_clicked(){
@@ -358,27 +315,6 @@ void calcul_clicked(){
 
 }
 
-void init_list(GtkWidget *list) {
-
-  GtkCellRenderer    *renderer;
-  GtkTreeViewColumn  *column;
-  GtkListStore       *store;
-
-  renderer = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(NULL,
-          renderer, "text", LIST_ITEM, NULL);
-  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list),FALSE);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(list), column);
-
-  store = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
-
-  gtk_tree_view_set_model(GTK_TREE_VIEW(list), GTK_TREE_MODEL(store));
-
-  g_object_unref(store);
-}
-
-
-
 static void activate (GtkApplication* app, gpointer user_data){
 
   //window setting
@@ -426,7 +362,7 @@ static void activate (GtkApplication* app, gpointer user_data){
   gtk_fixed_put(GTK_FIXED(fixed),input_button,180,15);
   gtk_widget_set_size_request(input_button,50,60);
   g_signal_connect(input_button,"clicked",
-                   G_CALLBACK(input_clicked),NULL);
+                   G_CALLBACK(enter_clicked),NULL);
 
   //add_button area
   add_button=gtk_button_new_with_label("add");

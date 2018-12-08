@@ -1,10 +1,5 @@
 #include <gtk/gtk.h>
-
-enum{
-  LIST_ITEM = 0,
-  N_COLUMNS
-};
-
+#include "myinit.h"
 
 void init_list(GtkWidget *list) {
 
