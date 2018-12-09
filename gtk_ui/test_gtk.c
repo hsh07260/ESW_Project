@@ -14,30 +14,7 @@ void finish_with_error(MYSQL *conn)
 {
   fprintf(stderr, "%s\n",mysql_error(conn));
   mysql_close(conn);
-  //exit(1);
 }
-
-//void func_insert(char *data1,char *data2,char *data3,char *data4,char *data5,char *data6,char *data7,char *data8,char *data9,char *data10)
-//{
-//  char query[1000];
-//
-//  MYSQL *conn;
-//  conn = mysql_init(NULL);
-
-//  if( mysql_real_connect(conn, "localhost", NULL, "123456", "SalBBAE", 0, NULL,0)==NULL)
-//  {
-//    printf("connect error\n");
-//  }
-//  printf("connect success\n");
-//  sprintf(query,"INSERT INTO record (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')", "date","m1","m2","l1","l2","d1","d2","tocal","weight","comment",data1,data2,data3,data4,data5,data6,data7,data8,data9,data10);
-//  if(mysql_query(conn, query))
-//  {
-//    printf("query error\n");
-//  }
-
-//  mysql_close(conn);
-//  return;
-//}
 
 
 GtkWidget *list;
@@ -110,6 +87,7 @@ void input_clicked(){
 void add_clicked(){
   GtkListStore *store;
   GtkTreeIter iter;
+  GtkTextBuffer *buffer=gtk_text_buffer_new(NULL);
 
   time_t timer=time(NULL);
   struct tm *t=localtime(&timer);
@@ -124,6 +102,23 @@ void add_clicked(){
   gtk_editable_set_editable(GTK_EDITABLE(height_entry), TRUE);
   gtk_editable_set_editable(GTK_EDITABLE(weight_entry), TRUE);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(txt_vw),TRUE);
+
+  gtk_entry_set_text(GTK_ENTRY(weight_entry), "");
+
+  gtk_entry_set_text(GTK_ENTRY(morning1), "");
+  gtk_entry_set_text(GTK_ENTRY(morning2), "");
+
+  gtk_entry_set_text(GTK_ENTRY(lunch1), "");
+  gtk_entry_set_text(GTK_ENTRY(lunch2), "");
+
+  gtk_entry_set_text(GTK_ENTRY(dinner1), "");
+  gtk_entry_set_text(GTK_ENTRY(dinner2), "");
+
+  gtk_label_set_text(GTK_LABEL(calorie_label), "");
+
+  gtk_text_buffer_set_text(buffer,"",strlen(""));
+  gtk_text_view_set_buffer(GTK_TEXT_VIEW(txt_vw), buffer);
+
 
 }
 
@@ -229,27 +224,14 @@ void changed_item(){
   MYSQL_ROW row;
   fields = mysql_fetch_fields(result);
 
-  get_date = "123";
   while(row = mysql_fetch_row(result))
   {
     if(strcmp(get_date,row[0])==0)
     {
-      printf("%s \n",row[0]);
-      printf("%s \n",row[1]);
-      printf("%s \n",row[2]);
-      printf("%s \n",row[3]);
-      printf("%s \n",row[4]);
-      printf("%s \n",row[5]);
-      printf("%s \n",row[6]);
-      printf("%s \n",row[7]);
-      printf("%s \n",row[8]);
-
-
       gtk_entry_set_text(GTK_ENTRY(weight_entry), row[8]);
 
       gtk_entry_set_text(GTK_ENTRY(morning1), row[1]);
       gtk_entry_set_text(GTK_ENTRY(morning2), row[2]);
-      //gtk_entry_set_text(GTK_ENTRY(morning3), NULL);
 
       gtk_entry_set_text(GTK_ENTRY(lunch1), row[3]);
       gtk_entry_set_text(GTK_ENTRY(lunch2), row[4]);
