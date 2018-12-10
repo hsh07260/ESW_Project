@@ -1,4 +1,4 @@
-INC=/home/ham/ESW_Project/gtk_ui/include
+INC=/home/dongho/ESW/team_project/ESW_Project/gtk_ui/include
 FLAG1=`pkg-config --cflags gtk+-3.0`
 FLAG2=`pkg-config --libs gtk+-3.0`
 
