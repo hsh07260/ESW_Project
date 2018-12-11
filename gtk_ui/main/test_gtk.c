@@ -6,6 +6,7 @@
 #include <string.h>
 #include "insert_data.h"
 #include "myinit.h"
+#include "remove_data.h"
 
 void finish_with_error(MYSQL *conn)
 {
@@ -95,7 +96,6 @@ void remove_clicked(){
   GtkTreeModel *model;
   GtkTreeIter  iter;
   char *get_date;
-  char remove_buf[100];
 
   store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(list)));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(list));
@@ -115,21 +115,7 @@ void remove_clicked(){
 
     init_set(weight_entry,morning1,morning2,lunch1,lunch2,dinner1,dinner2,
            calorie_label,txt_vw);
-
-    MYSQL *conn;
-    conn = mysql_init(NULL);
-
-    if( mysql_real_connect(conn, "localhost", NULL, "123456", "SalBBAE", 0, NULL,0)==NULL)
-    {
-      printf("connect error\n");
-    }
-    printf("connect success\n");
-    sprintf(remove_buf,"delete from record where date = '%s'",get_date);
-    if(mysql_query(conn,remove_buf))
-    {
-      printf("remove query error\n");
-    }
-    mysql_close(conn);
+    func_remove(get_date);
   }
   return;
 }
